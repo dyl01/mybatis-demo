@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    namespace:名称空间
+-->
+
+<mapper namespace="com.dyl.mapper.BrandMapper">
+
+    <resultMap id="brandResultMap" type="brand">
+        <result column="brandName" property="brandName"></result>
+        <result column="companyName" property="companyName"></result>
+    </resultMap>
+
+
+    <select id="selectAll" resultMap="brandResultMap">
+        select *
+        from tb_brand;
+    </select>
+
+
+    <!--    <select id="selectAll" resultType="Brand">-->
+    <!--        select *-->
+    <!--        from tb_brand;-->
+    <!--    </select>-->
+    <!--    <select id="selectAll" resultType="Brand">-->
+    <!--        select id, brand_name brandName, company_name companyName, ordered, description, status-->
+    <!--        from tb_brand;-->
+    <!--    </select>-->
+
+    <!--    parameterType:可以省略-->
+
+    <!--    <select id="selectById" parameterType="int" resultMap="brandResultMap">-->
+    <!--        select *-->
+    <!--        from tb_brand where id = #{id};-->
+    <!--    </select>-->
+
+    <!--    特殊字符 < &lt;-->
+    <select id="selectById" parameterType="int" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        where id
+         <![CDATA[
+         <
+         ]]>
+         #{id};
+    </select>
+
+    <!--
+    条件查询
+    -->
+    <!--    <select id="selectByCondition" resultMap="brandResultMap">-->
+    <!--        select *-->
+    <!--        from tb_brand-->
+    <!--        where status = #{status}-->
+    <!--            and companyName like #{companyName}-->
+    <!--            and brandName like #{brandName}-->
+    <!--    </select>-->
+
+
+    <!--    动态sql查询-->
+    <select id="selectByCondition" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        # where 1=1
+        <where>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+            <if test="companyName!=null and companyName!=''">
+                and companyName like #{companyName}
+            </if>
+            <if test="brandName!=null and brandName!=''">
+                and brandName like #{brandName}
+            </if>
+        </where>
+
+
+    </select>
+    <!--    <select id="selectByConditionSingle" resultMap="brandResultMap">-->
+    <!--        select *-->
+    <!--        from tb_brand-->
+    <!--        where-->
+    <!--        <choose>-->
+    <!--            <when test="status!=null">-->
+    <!--                status = #{status}-->
+    <!--            </when>-->
+    <!--            <when test="companyName!=null and companyName!=''">-->
+    <!--                companyName like #{companyName}-->
+    <!--            </when>-->
+    <!--            <when test="brandName!=null and brandName!=''">-->
+    <!--                brandName like #{brandName}-->
+    <!--            </when>-->
+    <!--            <otherwise>-->
+    <!--                1=1-->
+    <!--            </otherwise>-->
+    <!--        </choose>-->
+    <!--        ;-->
+    <!--    </select>-->
+    <select id="selectByConditionSingle" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        <where>
+            <choose>
+                <when test="status!=null">
+                    status = #{status}
+                </when>
+                <when test="companyName!=null and companyName!=''">
+                    companyName like #{companyName}
+                </when>
+                <when test="brandName!=null and brandName!=''">
+                    brandName like #{brandName}
+                </when>
+
+            </choose>
+        </where>
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_brand(brandName, companyName, ordered, description, status)
+        VALUES (#{brandName}, #{companyName}, #{ordered}, #{description}, #{status})
+    </insert>
+
+    <update id="update">
+        update tb_brand
+        <set>
+            <if test="brandName!=null and brandName!=''">
+                brandName=#{brandName},
+            </if>
+            <if test="companyName!=null and companyName!=''">
+                companyName=#{companyName},
+            </if>
+            <if test="ordered!=null">
+                ordered=#{ordered},
+            </if>
+            <if test="description!=null">
+                description=#{description},
+            </if>
+            <if test="status!=null">
+                status=#{status}
+            </if>
+            where id = #{id};
+        </set>
+    </update>
+
+
+    <delete id="deleteById">
+        delete
+        from tb_brand
+        where id = #{id}
+    </delete>
+
+
+    <delete id="deleteByIds">
+        delete from tb_brand where id
+        in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        ;
+    </delete>
+</mapper>
