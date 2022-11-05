@@ -289,7 +289,6 @@ public class MyBatisTest {
 
         brandMapper.deleteByIds(ids);
 
-
         sqlSession.commit();
 
         sqlSession.close();
